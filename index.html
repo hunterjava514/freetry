@@ -3,34 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix Account Generator (Educational Purpose)</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Crypto Real Estate</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .property-card { border: 1px solid #ddd; padding: 20px; margin: 10px; border-radius: 8px; }
+        .buy-button { background: #26a17b; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; padding: 20px; width: 300px; margin: 50px auto; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Netflix Account Generator</h1>
-        <form id="accountForm">
-            <label for="username">Email</label>
-            <input type="text" id="username" name="username" placeholder="Enter username" required>
+    <h1>Premium Properties Available for USDT</h1>
+    
+    <div class="property-card">
+        <img src="property1.jpg" alt="Luxury Villa" width="300">
+        <h2>Luxury Miami Villa - $1,250,000</h2>
+        <p>5 bedrooms | 6 bathrooms | 8,500 sqft</p>
+        <button class="buy-button" onclick="showPaymentModal('1')">Buy with USDT</button>
+    </div>
 
-            <label for="domain">Email Domain:</label>
-            <select id="domain" name="domain">
-                <option value="gmail.com">gmail.com</option>
-                <option value="yahoo.com">yahoo.com</option>
-                <option value="outlook.com">outlook.com</option>
-                <option value="hotmail.com">hotmail.com</option>
-            </select>
+    <div class="property-card">
+        <img src="property2.jpg" alt="Downtown Condo" width="300">
+        <h2>NYC Penthouse - $3,800,000</h2>
+        <p>4 bedrooms | 5 bathrooms | 5,000 sqft</p>
+        <button class="buy-button" onclick="showPaymentModal('2')">Buy with USDT</button>
+    </div>
 
-            <button type="submit">Generate Account</button>
-        </form>
-
-        <div id="result" class="result">
-            <h2>Netflix Account:</h2>
-            <p><strong>Email:</strong> <span id="generatedEmail"></span></p>
-            <p><strong>Password:</strong> <span id="generatedPassword"></span></p>
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <h3>Complete Your Purchase</h3>
+            <form id="paymentForm" onsubmit="processPayment(event)">
+                <input type="hidden" id="propertyId">
+                <p>Send exactly <span id="usdtAmount">0</span> USDT to:</p>
+                <p><strong id="walletAddress">0x123...abc</strong></p>
+                <label>Your USDT Wallet Address:</label>
+                <input type="text" id="buyerWallet" required>
+                <label>Email:</label>
+                <input type="email" id="buyerEmail" required>
+                <button type="submit">Confirm Payment</button>
+                <button type="button" onclick="closeModal()">Cancel</button>
+            </form>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        function showPaymentModal(propertyId) {
+            const modal = document.getElementById('paymentModal');
+            const prices = {'1': 1250000, '2': 3800000};
+            document.getElementById('usdtAmount').textContent = prices[propertyId];
+            document.getElementById('propertyId').value = propertyId;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        async function processPayment(e) {
+            e.preventDefault();
+            const formData = {
+                propertyId: document.getElementById('propertyId').value,
+                amount: document.getElementById('usdtAmount').textContent,
+                wallet: document.getElementById('buyerWallet').value,
+                email: document.getElementById('buyerEmail').value
+            };
+
+            try {
+                const response = await fetch('process_payment.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('Payment instructions sent to your email!');
+                    closeModal();
+                } else {
+                    alert('Error processing payment');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
 </body>
 </html>
