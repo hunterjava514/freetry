@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Account Generator (Educational Purpose)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Netflix Account Generator</h1>
+        <form id="accountForm">
+            <label for="username">Email</label>
+            <input type="text" id="username" name="username" placeholder="Enter username" required>
+
+            <label for="domain">Email Domain:</label>
+            <select id="domain" name="domain">
+                <option value="gmail.com">gmail.com</option>
+                <option value="yahoo.com">yahoo.com</option>
+                <option value="outlook.com">outlook.com</option>
+                <option value="hotmail.com">hotmail.com</option>
+            </select>
+
+            <button type="submit">Generate Account</button>
+        </form>
+
+        <div id="result" class="result">
+            <h2>Netflix Account:</h2>
+            <p><strong>Email:</strong> <span id="generatedEmail"></span></p>
+            <p><strong>Password:</strong> <span id="generatedPassword"></span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
