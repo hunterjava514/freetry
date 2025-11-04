@@ -126,6 +126,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            font-size: 14px;
         }
         
         .data-table th, .data-table td {
@@ -188,6 +189,14 @@
             .actions {
                 flex-direction: column;
             }
+            
+            .data-table {
+                font-size: 12px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 8px 10px;
+            }
         }
     </style>
 </head>
@@ -201,51 +210,46 @@
         <div class="form-container">
             <form id="dataForm">
                 <div class="form-group">
-                    <label for="number">Findings Count</label>
-                    <input type="text" id="number" required>
-                </div>
-                
-                <div class="form-group">
                     <label for="inspector">Inspector Name</label>
                     <input type="text" id="inspector" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="date">Date</label>
+                    <label for="date">Request Date</label>
                     <input type="date" id="date" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="dateClosed">Date Closed</label>
+                    <label for="dateClosed">Closed Date</label>
                     <input type="date" id="dateClosed">
                 </div>
                 
                 <div class="form-group">
-                    <label for="location">Building Location</label>
+                    <label for="location">Location</label>
                     <input type="text" id="location" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="area">Area</label>
+                    <label for="area">Inspected Area</label>
                     <input type="text" id="area" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="observation">Observation</label>
+                    <label for="observation">Observations</label>
                     <textarea id="observation" required></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="mmt">MMT</label>
-                    <input type="text" id="mmt">
+                    <label for="action">Action</label>
+                    <input type="text" id="action">
                 </div>
                 
                 <div class="form-group">
-                    <label for="status">Status</label>
-                    <select id="status" required>
-                        <option value="">Select Status</option>
+                    <label for="progress">Progress</label>
+                    <select id="progress" required>
+                        <option value="">Select Progress</option>
                         <option value="In Progress">In Progress</option>
-                        <option value="Closed">Completed</option>
+                        <option value="Completed">Completed</option>
                     </select>
                 </div>
                 
@@ -262,11 +266,14 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Number</th>
-                            <th>Inspector</th>
-                            <th>Date</th>
+                            <th>Inspector Name</th>
+                            <th>Request Date</th>
+                            <th>Closed Date</th>
                             <th>Location</th>
-                            <th>Status</th>
+                            <th>Inspected Area</th>
+                            <th>Observations</th>
+                            <th>Action</th>
+                            <th>Progress</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -303,15 +310,14 @@
             
             // Get form values
             const entry = {
-                number: document.getElementById('number').value,
                 inspector: document.getElementById('inspector').value,
-                date: document.getElementById('date').value,
-                dateClosed: document.getElementById('dateClosed').value,
+                requestDate: document.getElementById('date').value,
+                closedDate: document.getElementById('dateClosed').value,
                 location: document.getElementById('location').value,
-                area: document.getElementById('area').value,
-                observation: document.getElementById('observation').value,
-                mmt: document.getElementById('mmt').value,
-                status: document.getElementById('status').value,
+                inspectedArea: document.getElementById('area').value,
+                observations: document.getElementById('observation').value,
+                action: document.getElementById('action').value,
+                progress: document.getElementById('progress').value,
                 id: Date.now() // Unique ID for deletion
             };
             
@@ -339,8 +345,20 @@
                 return;
             }
             
+            // Create worksheet with the correct column order
+            const wsData = formData.map(entry => ({
+                'Inspector Name': entry.inspector,
+                'Request Date': entry.requestDate,
+                'Closed Date': entry.closedDate,
+                'Location': entry.location,
+                'Inspected Area': entry.inspectedArea,
+                'Observations': entry.observations,
+                'Action': entry.action,
+                'Progress': entry.progress
+            }));
+            
             // Create worksheet
-            const ws = XLSX.utils.json_to_sheet(formData);
+            const ws = XLSX.utils.json_to_sheet(wsData);
             
             // Create workbook
             const wb = XLSX.utils.book_new();
@@ -367,7 +385,7 @@
             dataTableBody.innerHTML = '';
             
             if (formData.length === 0) {
-                dataTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No data available</td></tr>';
+                dataTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No data available</td></tr>';
                 return;
             }
             
@@ -375,11 +393,14 @@
                 const row = document.createElement('tr');
                 
                 row.innerHTML = `
-                    <td>${entry.number}</td>
                     <td>${entry.inspector}</td>
-                    <td>${entry.date}</td>
+                    <td>${entry.requestDate}</td>
+                    <td>${entry.closedDate}</td>
                     <td>${entry.location}</td>
-                    <td>${entry.status}</td>
+                    <td>${entry.inspectedArea}</td>
+                    <td>${entry.observations}</td>
+                    <td>${entry.action}</td>
+                    <td>${entry.progress}</td>
                     <td class="delete-btn" data-id="${entry.id}">Delete</td>
                 `;
                 
